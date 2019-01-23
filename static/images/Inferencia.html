@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:8080/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Inferencia</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./Inferencia_files/w3.css">
+<link rel="stylesheet" href="./Inferencia_files/css">
+<link rel="stylesheet" href="./Inferencia_files/font-awesome.min.css">
+<link rel="stylesheet" href="./Inferencia_files/bootstrap.min.css">
+<script src="./Inferencia_files/jquery.min.js"></script>
+<script src="./Inferencia_files/bootstrap.min.js"></script>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+    font-size: 18px !important;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url('/static/images/parallax.png');
+    min-height: 100%;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+    background-image: url("/static/images/parallax.png");
+    min-height: 200px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+    background-image: url("/static/images/parallax.png");
+    min-height: 200px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+
+.nodecoration {
+	text-decoration: none !important; 
+}
+
+
+.nodecoration a {
+	text-decoration: none !important; 
+}
+
+.text-justified {
+  text-align: justify;
+}
+
+.userButton :hover {
+  background-color: #00b6a6;
+}
+
+.about-count {
+  color: #F25907;
+  letter-spacing:0em;
+  font-size: 100px;
+  text-align: center;
+}
+
+
+.train-img {
+    background-image: url("/static/images/train.png");
+    min-height: 400px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.w3-opacity-min {
+    opacity: 1;
+}
+
+.w3-xxlarge {
+    font-size: 76px!important;
+}
+
+.w3-content{
+  height: auto;
+  min-height: 100%;
+}
+
+.w3-display-top-left {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+.w3-display-middle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+.my-btn {
+    font-family: "Lato", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    background: #00b6a6;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+}
+
+.demo-icon-mob {
+    display: none;
+
+  }
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    overflow-x: hidden;
+    width: 600px;
+    font-size: 16px !important;
+  }
+
+  .demo-icon {
+    display: none;
+
+  }
+
+  .demo-icon-mob {
+    display: block;
+
+  }
+
+  .about-icon {
+    display: none;
+  }
+  .w3-xxlarge {
+    font-size: 36px!important;
+}
+
+    .userPanel {
+    	display: none;
+    }
+
+    .about-count {
+      display: none;
+    } 
+}
+</style>
+</head><body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+
+	
+    
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="http://localhost:8080/#home" class="w3-bar-item w3-button nodecoration">HOME</a>
+    <a href="http://localhost:8080/#train" class="w3-bar-item w3-button w3-hide-small nodecoration"><i class="fa fa-cog"></i> TRAIN</a>
+    <a href="http://localhost:8080/#demo" class="w3-bar-item w3-button w3-hide-small nodecoration"><i class="fa fa-play"></i> DEMO</a>
+    <a href="http://localhost:8080/#about" class="w3-bar-item w3-button w3-hide-small nodecoration"><i class="fa fa-user"></i> ABOUT</a>
+    <a href="http://localhost:8080/#contact" class="w3-bar-item w3-button w3-hide-small nodecoration"><i class="fa fa-envelope"></i> CONTACT</a>
+    <a href="http://localhost:8080/home" class="w3-bar-item w3-button w3-hide-small nodecoration"><i class="fa fa-server"></i> MY PROJECTS</a>
+    <a href="http://localhost:8080/signin" class="w3-bar-item w3-button w3-hide-small w3-right nodecoration">
+    	<i class="fa fa-user"></i> SIGN IN</a>
+        <!-- <i class="fa fa-search"></i> -->
+	<a href="http://localhost:8080/signup" class="w3-bar-item w3-button w3-hide-small w3-right nodecoration">
+    	<i class="fa fa-user"></i> SIGN UP</a>
+  </div>
+	
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium">
+    <a href="http://localhost:8080/#train" class="w3-bar-item w3-button nodecoration" onclick="toggleFunction()">Train</a>
+    <a href="http://localhost:8080/#demo" class="w3-bar-item w3-button nodecoration" onclick="toggleFunction()">Demo</a>
+    <a href="http://localhost:8080/#about" class="w3-bar-item w3-button nodecoration" onclick="toggleFunction()">About</a>
+    <a href="http://localhost:8080/#contact" class="w3-bar-item w3-button nodecoration" onclick="toggleFunction()">Contact</a>
+    <a href="http://localhost:8080/home" class="w3-bar-item w3-button nodecoration" onclick="toggleFunction()">My Projects</a>
+	
+    <a href="http://localhost:8080/signin" class="w3-bar-item w3-button nodecoration">SignIn</a>
+	<a href="http://localhost:8080/signup" class="w3-bar-item w3-button nodecoration">SignUp</a>
+	
+    
+  </div>
+</div>
+
+<!-- First Parallax Image with Logo Text -->
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+  
+  <div class="w3-display-top-left" style="white-space:nowrap;">
+    <div class="row" style="width: 25%; float: right; position: relative; top:-75px; left: -100px">
+    
+   <!--  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.10000038146972656 6.599998474121094 200.09999084472656 186.69998168945312" role="img" preserveAspectRatio="xMidYMid meet" stroke="white" fill="white" style="stroke-width: 0px;">
+    <g>
+        <path d="M177.2 82c-5.4 0-10.4 2-14.4 5l-30.5-28.7c5-5.3 8.4-13 8.4-21 0-17-13.7-30.7-30.8-30.7S79.1 20.2 79.1 37.2c0 13 8.4 24.4 19.8 28.7l-3.7 24.4c-7.7.3-13.7 6.3-13.7 14v1.7L39 116.7c-3-7.3-10.1-12.4-18.8-12.4-11.1 0-20.1 9-20.1 20s9 20 20.1 20c7 0 13.1-3.3 16.8-8.7l64.7 31.4c-.7 2-1 4-1 6.3 0 11 9 20 20.1 20s20.1-9 20.1-20-9-20-20.1-20c-1 0-2 0-3 .3l-12.4-39.1c2.3-2 3.7-5 4.4-8l45.2.7c1.3 11.4 10.7 20 22.4 20 12.4 0 22.8-10 22.8-22.7S189.6 82 177.2 82zm-67.7-14.1c6.7 0 13.1-2.3 18.1-6L158.5 91c-2 3-3.7 6.3-4 10l-45.2-.3c-1.3-4.3-4.4-8-8.7-9.7l3.7-23.7c1.6.6 3.2.6 5.2.6zm2.1 87.5c-3.4 1.7-6 4-8 7l-64.3-31.7c.7-2 1-4 1-6.3v-2l43.2-11c2.3 4.3 7 7 12.4 7 1.7 0 3.4-.3 4.7-.7l11 37.7z"></path>
+    </g>
+    </svg> -->
+
+  </div>
+  <div class="row">
+    <span class="w3-center w3-wide w3-padding-large w3-xlarge w3-animate-opacity" style="color:white"><span class="w3-xxlarge w3-text-white" style="font-size: 40 px !important; letter-spacing: 5px; line-height: .5">Inferencia <img src="./Inferencia_files/logo1.png" style="height:70px"></span><br><span class="w3-hide-small" style="font-size: 20px; margin-left: 30px;">Plug-n-Play Machine Learning</span> 
+    </span>
+  </div>
+  </div>
+
+  <div class="w3-display-middle" style="white-space:nowrap;">
+    <button class="my-btn" onclick="document.location.href=&#39;/home&#39;"> START TRIAL </button>
+  </div>
+</div>
+
+<!-- Container (About Section) -->
+<div class="w3-content w3-container w3-padding-64" id="home">
+  <div>
+  <h3 class="w3-center">ABOUT US</h3>
+
+  <p style="text-align: justify;text-justify: inter-word;">Everyone is excited to build Artificially Intelligent (AI) Systems, so are we, but with a different approach. We at Inferencia believe that computationally intensive  machine learning algorithms doesn’t necessarily require high end servers on cloud, but can rather be performed on consumer electronics without utilizing network connectivity. The advantage is obvious, much faster response time and no dependency on network connectivity. This is what our product, Infer-It, is meant for. Infer-It is a highly efficient machine learning stack that empower embedded devices to recognize variety of objects at high speeds all without uploading images over cloud. Our design allows:</p>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <span class="about-count">
+        <p>01</p>
+      </span>
+      <h3 align="center">
+      PLUG-N-PLAY
+      </h3>
+      <p class="text-justified">
+      Inferencia designs plug-n-play software stack of neurons with pre-trained deep learning libraries ready for integration in any device using well defined APIs.</p>
+      <p class="text-justified">ides our pre-trained object-detection libraries,  we provide customized trained datasets as pluggable modules to AI developers. Our design allow developers to build AI products without getting into intricacies of machine learning.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="about-count">
+        <p>02</p>
+      </span>
+      <h3 align="center">
+      STANDALONE
+      </h3>
+      <p class="text-justified">
+      Our machine learning stack is completely standalone, and is fully portable on a variety of embedded devices such as cellphones, TVs, cameras, tablets, IOT devices, washer/dryer, or you name it.</p><p>
+    </p></div>
+    <div class="col-sm-4">
+     <span class="about-count">
+        <p>03</p>
+      </span>
+      <h3 align="center">
+      FAST &amp; SECURE
+      </h3>
+      <p class="text-justified">
+      With embedded systems in mind, we provide solutions highly optimized for performance. Our design allows us to process inputs up at much higher speeds without uploading your content over internet. Performance combined with small memory foot print makes it ideal for an enormous set of AI applications requiring real-time response.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+  <!-- 
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+<div class="w3-quarter w3-section">
+    <span class="w3-xlarge">14+</span><br>
+    Partners
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">55+</span><br>
+    Projects Done
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">89+</span><br>
+    Happy Clients
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">150+</span><br>
+    Meetings
+  </div>
+</div> -->
+
+<!-- Second Parallax Image with Portfolio Text -->
+<div class="bgimg-2 w3-display-container w3-opacity-min" id="train">
+  <div class="w3-display-middle">
+    <span class="w3-xxlarge w3-text-white w3-wide">TRAIN</span>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div class="w3-content w3-container w3-padding-64" style="">
+  <h3 class="w3-center">Enabling AI for your use-case is now as easy as drag-n-drop</h3>
+  <p class="">Although our library include object detection for a variety of objects, we enable AI developers to train new objects on demand basis, and it is as simple as sharing images with your friend.
+  </p>
+  <p>
+    Using our easy-to-use web tool, developers can upload set of images to train, and we do the rest to generate a customized neural network library trained on your dataset.
+  </p>
+  <div style="margin-left: auto; margin-right: auto; text-align: center; width:100%; height:100%">
+    <img src="./Inferencia_files/train.png" width="75%">
+  </div>
+
+</div>
+
+
+<div class="bgimg-2 w3-display-container w3-opacity-min" id="demo">
+  <div class="w3-display-middle">
+    <span class="w3-xxlarge w3-text-white w3-wide">DEMO</span>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div class="w3-content w3-container w3-padding-64" style="">
+  <h3 class="w3-center"></h3>
+  <p class="">Download our demo app Infer-It on your mobile device &amp; try it out. Don't forget to leave feedback or reach us out for more information.
+  </p>
+  <p>
+    Using our easy-to-use web tool, developers can upload set of images to train, and we do the rest to generate a customized neural network library trained on your dataset.
+  </p>
+  <p>
+    </p><div class="row demo-icon-mob">
+      <a href="https://itunes.apple.com/in/app/infer-it/id1326525821?mt=8" target="blank">
+        <img class="about-icon" src="./Inferencia_files/appstore.png" width="55%">
+      </a>
+    </div>
+    <div class="row demo-icon-mob">
+      <a href="https://play.google.com/store/apps/details?id=in.pixelsystems.infer_it" target="blank">
+        <img class="about-icon" src="./Inferencia_files/playstore.png" width="55%">
+      </a>
+    </div>
+  <p></p>
+  <br>
+  <div class="row demo-icon">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <a href="https://itunes.apple.com/in/app/infer-it/id1326525821?mt=8" target="blank">
+        <img class="about-icon" src="./Inferencia_files/appstore.png" width="95%">
+      </a>
+    </div>
+    <div class="col-sm-3">
+      <a href="https://play.google.com/store/apps/details?id=in.pixelsystems.infer_it" target="blank">
+        <img class="about-icon" src="./Inferencia_files/playstore.png" width="95%">
+      </a>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+
+</div>
+
+
+<div class="bgimg-2 w3-display-container w3-opacity-min" id="about">
+  <div class="w3-display-middle">
+    <span class="w3-xxlarge w3-text-white w3-wide">MEET INFERENCIA</span>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div class="w3-content w3-container w3-padding-64" style="">
+  <div class="row" style="display: flex">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-2" style="display: flex;">
+      <div class="about-icon" style="height: 100px; width: 90%; margin: auto;">
+        <img class="about-icon" src="./Inferencia_files/team.png" width="100%" style="display: block;  margin-top: 20%">
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <h3 style="color: #F25907">
+        OUR TEAM
+      </h3>
+      <p>
+      Our team comprises machine learning, embedded system and networking experts spread across India &amp; US.
+      </p>
+      <p>
+      If AI is your passion and want to become part of our team, send your resumes to jobs@mycompany.ai
+      </p>
+    </div>
+  </div>
+
+  <div class="row" style="display: flex">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-2">
+      <div class="about-icon" style="height: 100px; width: 90%; margin: auto;">
+        <img class="about-icon" src="./Inferencia_files/vision.png" width="100%" style="display: block;  margin-top: 20%">
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <h3 style="color: #F25907">
+        OUR VISION
+      </h3>
+      <p>
+      Our vision is to enable developers to make every device intelligent for in home use, for IOT, and for industrial applications.
+      </p>
+    </div>
+  </div>
+
+  <div class="row" style="display: flex">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-2">
+      <div class="about-icon" style="height: 100px; width: 90%; margin: auto;">
+        <img class="about-icon" src="./Inferencia_files/tech.png" width="100%" style="display: block; margin-top: 20%;">
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <h3 style="color: #F25907">
+        TECHNOLOGY
+      </h3>
+      <p>
+      While no technology is superior than human-technology, we build technology to offload certain roles of humans to highly complex systems using machine learning concepts, all using our home brewed AI library.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Third Parallax Image with Portfolio Text -->
+<div class="bgimg-3 w3-display-container w3-opacity-min" id="contact">
+  <div class="w3-display-middle">
+     <span class="w3-xxlarge w3-text-white w3-wide">CONTACT</span>
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div class="w3-content w3-container w3-padding-64">
+  <h3 class="w3-center">WHERE I WORK</h3>
+  <p class="w3-center"><em>I'd love your feedback!</em></p>
+
+  <div class="w3-row w3-padding-32 w3-section">
+    <div class="w3-col m4 w3-container">
+      <!-- Add Google Maps -->
+      <div id="googleMap" class="w3-round-large w3-greyscale" style="width:100%;height:400px;"></div>
+    </div>
+    <div class="w3-col m8 w3-panel">
+      <div class="w3-large w3-margin-bottom">
+        <i class="fa fa-map-marker fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i>
+          <address>
+            Inferencia Logic Pvt Ltd,<br>
+            No 1 &amp; 2,A1 Block,<br>
+            Kundanahalli,<br>
+            Bangalore,<br>
+            Karnataka, 560048  
+          </address>
+          <br>
+        <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Phone: info@mycompany.ai<br>
+        <i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: info@mycompany.ai<br>
+      </div>
+      <!-- <p>Swing by for a cup of <i class="fa fa-coffee"></i>, or leave me a note:</p>
+      <form action="/action_page.php" target="_blank">
+        <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+          <div class="w3-half">
+            <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+          </div>
+          <div class="w3-half">
+            <input class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
+          </div>
+        </div>
+        <input class="w3-input w3-border" type="text" placeholder="Message" required name="Message">
+        <button class="w3-button w3-black w3-right w3-section" type="submit">
+          <i class="fa fa-paper-plane"></i> SEND MESSAGE
+        </button>
+      </form> -->
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<!-- facebook: https://www.facebook.com/Inferencia-Logic-1802194939793799
+twitter: https://twitter.com/InferenciaLogic
+Linkedin: https://www.linkedin.com/company/mycompany-logic/ -->
+<footer class="w3-center w3-black w3-padding-64 w3-opacity w3-hover-opacity-off">
+  <a href="http://localhost:8080/#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
+  <div class="w3-xlarge w3-section">
+    <a href="https://www.facebook.com/Inferencia-Logic-1802194939793799" target="blank" style="text-decoration: none; color: inherit;">
+      <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    </a>
+    <a href="https://twitter.com/InferenciaLogic" target="blank" style="text-decoration: none; color: inherit;">
+      <i class="fa fa-twitter w3-hover-opacity"></i>
+    </a>
+    <a href="https://www.linkedin.com/company/mycompany-logic/" target="blank" style="text-decoration: none; color: inherit;"><i class="fa fa-linkedin w3-hover-opacity"></i></a>
+  </div>
+<!-- Add Google Maps -->
+<script>
+function myMap()
+{
+  myCenter=new google.maps.LatLng(41.878114, -87.629798);
+  var mapOptions= {
+    center:myCenter,
+    zoom:12, scrollwheel: false, draggable: false,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var map=new google.maps.Map(document.getElementById("googleMap"),mapOptions);
+
+  var marker = new google.maps.Marker({
+    position: myCenter,
+  });
+  marker.setMap(map);
+}
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+// Change style of navbar on scroll
+window.onscroll = function() {myFunction()};
+function myFunction() {
+    var navbar = document.getElementById("myNavbar");
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+    } else {
+        navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
+    }
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+// var user = None;
+// if (user) {
+// 	const name = user['name'];
+// 	const email = user['email']
+// 	document.getElementById('myNavbar').style.display='none';
+// 	document.getElementById('myNavbar_loggedin').style.display='block';
+// }	
+
+</script>
+
+</footer></body></html>

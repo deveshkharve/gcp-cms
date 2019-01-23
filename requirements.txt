@@ -1,0 +1,8 @@
+Flask==0.12.2
+Flask-Cors==3.0.3
+gunicorn==19.7.1
+PyMySQL==0.8.0
+google-cloud-storage==1.7.0
+gcloud
+google-auth-httplib2
+google-api-python-client

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Infrencia</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->  
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon.ico')}}"/>
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css')}}">
+<!--===============================================================================================-->  
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css')}}">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css')}}">
+<!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css')}}">
+<!--===============================================================================================-->
+</head>
+<body>
+<!-- Navbar (sit on top) chandra -->
+<div class="w3-top">
+
+	{% if not user  %}
+    
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/" class="w3-bar-item w3-button nodecoration">HOME</a>  
+  </div>
+	{% else %}
+
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/" class="w3-bar-item w3-button nodecoration">HOME</a>
+  </div>
+	{% endif %}	  
+<!-- Navbar END: chandra -->
+  <div class="limiter">
+    <div class="container-login100" style=" background-image: url({{ url_for('static', filename='images/parallax.png')}});" >
+      <div class="container">
+<div class="row">
+  <div class="col-sm-4">
+    
+    <div id= "paymentDiv" class = "payment-panel">
+  <div class="plan">
+<header>	  
+<span title="Get a trained model to use on your device for FREE"><h2 align="center" > Free </h2></span>	  
+</header>
+<ol type="1">
+  <span title="This is number of classes"><li><b>Number of categories </b>: 5</li></span>	
+  <span title="Supported platforms on which the trained model library will work"><li><b>Compatible platforms </b>: iOS, Android, Rasbian</li> </span>	
+  <span title="User uploaded labelled data belongs to both Inferencia and the uploaded user"><li><b>Labelled data ownership</b>: Inferencia and User</li></span>	
+  <span title="Library is time bounded for 15 days"><li><b>Library expiry</b>: 15 days </li></span>		
+</ol>	  
+</div>
+		  <button class="button button4" style="width: 313px; margin: 0 auto;" ><a href="/home" >Create a free project</a></button>
+</div>
+
+
+  </div>
+  <div class="col-sm-4">
+    <div id= "paymentDiv" class = "payment-panel">
+  <div class="plan">
+<header>	  
+<span title="Get a lifelong valid library for unlimited set of images"><h2 align="center" > $247 Unlimted </h2></span>	  
+</header>	  
+<ol type="1">
+  <span title="Any number of catagories can be created"><li><b>Number of categories </b>: Unlimited</li></span>	
+  <span title="Supported platforms on which the trained model library will work"><li><b>Compatible platforms </b>: iOS, Android, Rasbian</li></span>	
+  <span title="User uploaded labelled data belongs to both Inferencia and the uploaded user"><li><b>Labelled data ownership</b>: Inferencia and User</li></span>	
+  <span title="Generated library can be used forever"><li><b>Library expiry</b>: Lifelong </li>	</span>	
+</ol>
+	</div>
+		  <button class="button button4" style="width: 313px; margin: 0 auto;" ><a href="/home" >Create a unlimted project</a></button>
+</div>
+
+</div>
+  <div class="col-sm-4">
+    <div id= "paymentDiv" class = "payment-panel">
+      <div class="plan">
+<header>	  
+<span title="Contact us: info@mycompany.ai for your custom requirements"> <h2 align="center" > Custom</h2></span>
+</header>		  
+<ol type="1">
+  <span title="This is number of classes"><li><b>Number of categories </b>: Depends</li></span>	
+  <span title="Supported platforms on which the trained model library will work"><li><b>Compatible platforms </b>: iOS, Android, Rasbian</li></span>	
+  <span title="User uploaded labelled data belongs to User"><li><b>Labelled data ownership</b>: User; Inferencia does not own</li></span>	
+  <span title="Generated library can be used forever"><li><b>Library expiry</b>: Lifelong </li></span>		
+</ol>
+		  <button class="button button4" style="width: 313px; margin: 0 auto;" ><a href="/home" >Create a custom project</a></button>
+</div>
+
+
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+  
+  
+
+  
+<!--===============================================================================================-->  
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+<!--===============================================================================================-->
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+<!--===============================================================================================-->
+  <script src="{{ url_for('static', filename='vendor/select2/select2.min.js')}}"></script>
+<!--===============================================================================================-->
+  <script src="{{ url_for('static', filename='vendor/tilt/tilt.jquery.min.js')}}"></script>
+  <script >
+    $('.js-tilt').tilt({
+      scale: 1.1
+    })
+  </script>
+<!--===============================================================================================-->
+  <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+<span title="Contact us at info@mycompany.ai"> <footer align="center">	Copyright @Inferencia 2018</footer> </span>
+
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+</head>
+
+<style type="text/css">
+  .razorpay-payment-button{
+    font-family: "Lato", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    background: #00b6a6;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    width: 300px;
+    margin: auto;
+  }
+
+  .payment-panel{
+    height: 460px;
+    width: 90%;
+    border-style: solid;
+    border-color: #777;
+    border-width: 1px; 
+    background-color: white !important;
+  }
+
+	ol  {
+	width: 300px;
+    float: left;
+    position: relative;
+    height: calc(100% - 2px);
+    padding-top: 20px;
+    padding-left: 20px;	
+    background-color: transparent;
+    border-top-left-radius: 5px;
+	color: #777		
+font-family: "Lato", sans-serif;	
+		font-size: 15px;
+}
+
+div1 {
+    background-color: #fff;
+    padding: 20px;
+    display: none;
+}
+    
+span:hover + div1 {
+    display: block;
+}
+
+ul.new {
+    list-style-position: inside;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    width: 400px;
+}
+header,footer {
+    padding: 3px;
+    background-color: #91958C;
+    clear: left;
+
+}
+	.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+.button4 {background-color: #e7e7e7; color: black;} /* Gray */ 
+	
+  .plan {
+    height: 60%;
+
+  }
+</style>
+
+<body>
+
+
+</body>
+
+</html>

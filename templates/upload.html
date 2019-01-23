@@ -1,0 +1,260 @@
+<html>
+<head>
+	<title>
+		File Upload
+	</title>
+
+</head>
+<script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
+
+<script>
+	var prevBox = document.getElementById("previewsContainer");
+	Dropzone.options.fileDropzone = {
+	dictDefaultMessage: "drop file from your computer",
+	previewsContainer: "#prevBox", // The name that will be used to transfer the file
+	createImageThumbnails:false,
+	clickable:true,
+	init : function() {
+  	myDropzone = this;
+
+		this.on("addedfile", function(file) {
+		/* Maybe display some more file information on your page */
+			console.log(file);
+			try{
+				var loadingContainer = document.createElement("div");
+				loadingContainer.setAttribute("id", "myProgress"+file.upload.uuid);
+				loadingContainer.setAttribute("class", "myProgress");
+				var progressPanel = document.getElementById("progressPanel");
+				progressPanel.appendChild(loadingContainer);
+
+				var loadingBarInfo = document.createElement("div");
+				loadingBarInfo.setAttribute("class", "bar-info");
+				if (file.fullPath){
+					loadingBarInfo.innerHTML=`<span>${file.fullPath}</span>`;
+				}else{
+					loadingBarInfo.innerHTML=`<span>${file.name}</span>`;
+				}
+				loadingContainer.appendChild(loadingBarInfo);
+				
+				var loadingBar = document.createElement("div");
+				loadingBar.setAttribute("class", "myBar");
+				loadingBar.setAttribute("id", "myBar"+file.upload.uuid);
+				loadingContainer.appendChild(loadingBar);
+				
+			}catch(err){
+				console.log(err);
+			}
+		});
+        //Restore initial message when queue has been completed
+        this.on("sending", function(file, xhr, data) {
+		    // if file is actually a folder
+		    if(file.fullPath){
+		    	data.append("fullPath", file.fullPath);
+		    }
+		});
+        this.on('uploadprogress', function (file, progress) {
+    });
+
+
+    },
+
+    uploadprogress: function(file, progress, bytesSent) {
+    	var done = progress;
+    	console.log(file);
+    	var myProgress = document.getElementById("myProgress"+file.upload.uuid);
+    	myProgress.style.display = 'table';
+    	var elem = document.getElementById("myBar"+file.upload.uuid);
+    	elem.style.display = 'table-cell';
+    	elem.style.width = progress + '%';
+    	// myProgress.innerText=file.name;
+    }
+};	
+</script>
+<style>
+.dropzonePreviews {
+	display: none;
+}
+
+.dropzone {
+	background-color: #f4f5f7;
+	border-style: dashed;
+	border-width: 1px;
+	border-color: #d6d7d8;
+	max-width:800px;
+	min-width: 460px;
+	width:60%;
+	height: 40%;
+ 	text-align: center;
+}
+.dropzone span {
+	margin:10px 10px 0 0;
+    padding:5px 10px 
+	font-size: 20;
+	color: #323232;
+	text-align: center;
+}
+
+.upload-form {	
+	display: inline-block;	
+}
+
+.dz-success-mark {
+	display: none;
+}
+
+.dz-error-mark {
+	display: none;
+}
+
+.dropzone-previews {
+	color: #323232;
+}
+
+.progressPanel {
+	max-width:800px;
+	min-width: 460px;
+	width:60%;
+	height: 40%;
+}
+
+.myProgress {
+	width: 80%;
+	background-color: white;
+	border: solid;
+	border-color: grey;
+	border-width: 1px;
+	border-radius: 2px;
+	height: 20px;
+	display: none;
+	margin-top: 10px;
+	position: relative;
+}
+
+.bar-info {
+	color:grey;
+	font-family: sans-serif;
+	font-size: 12px;
+	position: absolute;
+	top: 10%;
+}
+
+.bar-info span {
+	max-width: 600px;
+	width: 400px;
+	margin:10px 10px 0 0;
+    padding:5px 10px;
+	color: #323232;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;	
+}
+
+.myBar {
+	max-width: 80%
+	width: 0%;
+	height: 10%;
+	background-color: #0026ff;
+	border-radius: 2px;
+	display: none;
+	position: absolute;
+	bottom: 0;
+}
+
+.main {
+	width: 100%;
+	height: 100%;
+}
+
+.dropzone img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+
+@media only screen and (max-width: 500px) {
+    body {
+        background-color: lightblue;
+    }
+
+    .progressPanel {
+    	background-color: #e8e8e8;
+    	margin:auto;
+	    padding:5px 10px;
+		max-width:800px;
+		min-width: 200px;
+		width:80%;
+		height: 40%;
+		text-overflow: ellipsis;
+
+	}
+	.dropzone {
+		min-width: 200px;
+		margin:auto;
+	    padding:5px 10px;
+		background-color: #f4f5f7;
+		border-style: dashed;
+		border-width: 1px;
+		border-color: #d6d7d8;
+		width:80%;
+		height: 40%;
+	 	text-align: center;
+	}
+	.dropzone span {
+		min-width: 200px;	
+		margin:auto;
+	    padding:5px 10px;
+		font-size: 20;
+		color: #323232;
+		text-align: center;
+	}
+
+
+	.progressPanel {
+		max-width:460px;
+		min-width: 200px;
+		width:80%;
+		height: 40%;
+	}
+
+	.bar-info span {
+		min-width: 200px;
+		width: 400px;
+		margin:10px 10px 0 0;
+	    padding:5px 10px;
+		color: #323232;
+		text-align: center;
+		white-space: nowrap;
+  		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+</style>
+<body>
+ <container class="main">
+ 	<div class="upload-form">
+	  <form  action = "/uploader" method = "POST"
+		  enctype = "multipart/form-data" class="dropzone"
+		  id="fileDropzone"
+		  >
+		  <img src = "{{ url_for('static', filename='images/plus.png') }}" />
+		  <div class="fallback">	
+		  	<input name="file" id="myFile" type="file" />
+		  </div>
+		</form>
+	</div>
+	<container>
+		<div class="progressPanel" id="progressPanel">
+			<!-- <div id="myProgress" class="myProgress">
+				<div id="myBar" class="myBar"></div>
+			</div> -->
+		</div>
+		<div class="dropzonePreviews" id="prevBox">
+
+		</div>
+	</container>
+
+</container>
+</body>
+</html>

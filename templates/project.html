@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html>
+<title>Inferencia</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<head>
+<script>
+var state = {{ value| safe }}
+const directoryStack = [];
+</script>
+</head>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+}
+
+body {
+	/*overflow-y: hidden;*/ // hide vertical
+	overflow-x: hidden;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url('{{ url_for('static', filename='images/parallax.png') }}');
+    min-height: 100%;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+    background-image: url("{{ url_for('static', filename='images/parallax.png') }}");
+    min-height: 400px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+    background-image: url("{{ url_for('static', filename='images/parallax.png') }}");
+    min-height: 400px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+html *
+  {
+     font-size: 18px !important;
+  }
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+</style>
+
+
+<script src="../static/js/dropzone.js"></script>
+
+<script type="text/javascript">
+	var totalSize = 0;
+	var done = 0;
+  var prevBox = document.getElementById("previewsContainer");
+  Dropzone.options.fileDropzone = {
+  dictDefaultMessage: '<img src="{{ url_for("static", filename="images/plus.png") }}" onclick="formClick()" alt="Add Files" style="width:42px;height:42px;border:0; z-index: -100; margin: 0 auto;">' + "<br><span>drop file from your computer</span>",
+  previewsContainer: "#prevBox", // The name that will be used to transfer the file
+  createImageThumbnails:false,
+  clickable:true,
+  init : function() {
+    myDropzone = this;
+      this.on("addedfile", function(file) {
+      	//document.getElementById("createAPI").disabled = false; //chandra
+        document.getElementById("createAPI").title = "Drag and drop image on right side space";
+     	document.getElementById("downloadPkg").disabled = true;
+	    document.getElementById("infopanel").disabled = true
+    
+    try{
+
+		if (document.getElementById("uploaderDiv").style.visibility == 'visible'){
+  	  	document.getElementById("uploaderDiv").style.visibility = 'hidden';
+    	}
+    }catch(err){
+    	console.log(err);
+    }  
+    /* Maybe display some more file information on your page */
+      if (! file.fullPath){
+      	alert("cannot upload a file");
+      	return;
+      }
+      totalSize = totalSize + file.size;
+      const notif = document.getElementById("live-chat");
+      notif.style.display= "block";
+      // const notifCounter = document.getElementById("notifCounter");
+      // notifCounter.innerHTML = myDropzone.files.length;
+
+      try{
+        var infoContainer = document.createElement("div");
+        infoContainer.setAttribute("id", "myProgress"+file.upload.uuid);
+        infoContainer.setAttribute("class", "chat-message clearfix");
+
+        var loadingContainer = document.createElement("div");
+        loadingContainer.setAttribute("id", "myProgress"+file.upload.uuid);
+        loadingContainer.setAttribute("class", "chat-message-content clearfix");
+
+        if (file.fullPath){
+          loadingContainer.innerHTML=`<i id = "state${file.upload.uuid}" style="color:blue" class="fa fa-clock-o"></i>&nbsp;<span>&nbsp;${file.fullPath}</span><hr>`;
+        }else{
+          loadingContainer.innerHTML=`<i id = "state${file.upload.uuid}" style="color:blue" class="fa fa-clock-o"></i>&nbsp;<span>&nbsp;${file.name}</span><hr>`;
+        }
+
+        infoContainer.appendChild(loadingContainer);
+        var progressPanel = document.getElementById("progressPanel");
+        progressPanel.appendChild(infoContainer);
+
+      }catch(err){
+        console.log(err);
+      }
+    });
+        //Restore initial message when queue has been completed
+        this.on("sending", function(file, xhr, data) {
+        // if file is actually a folder
+        if(file.fullPath){
+          data.append("fullPath", file.fullPath);
+        }
+    });
+        this.on('uploadprogress', function (file, progress) {
+    });
+
+
+    },
+
+    uploadprogress: function(file, progress, bytesSent) {
+    	// console.log('bytesSent', bytesSent, ' out of ', file.size);
+      var doneFile = done + ((progress/100) * file.size);
+
+      console.log ()
+      console.log('done: ', done);
+      console.log('totalSize: ', totalSize);
+      const progressState = parseInt((doneFile/totalSize)*100);
+      console.log(progressState);
+
+      document.getElementById("totalProgressText").innerText = `${progressState}%`;
+      document.getElementById("totalProgress").style.width = `${progressState}%`;
+      if (progressState == 100){
+        //refresh state
+        document.getElementById("createAPI").disabled = false; //chandra
+        document.getElementById("createAPI").title = "Click here to start training your model";
+		document.getElementById("infopanel").disabled = true
+        document.getElementById("downloadPkg").title = "Click 'Brew Package' for model training";		
+        openFolderLink('');
+      }
+      if(progress == 100){
+
+			done = done + file.size;
+      var upState = document.getElementById(`state${file.upload.uuid}`)
+		  upState.setAttribute("class", "fa fa-check");
+	      upState.style.color='#159b1c'
+      }
+      // myProgress.innerText=file.name;
+    }
+};
+
+function selectFile(){
+	console.log("selecting...")
+	console.log(document.getElementById("uploadForm"));
+	document.getElementById("uploadForm").click();
+}
+
+
+  document.addEventListener("dragenter", function(){
+    console.log("doc dragenter");
+	document.getElementById("uploaderDiv").style.visibility = 'visible';
+    try{
+      if (state.files){
+        	// document.getElementById("uploaderDiv").style.zIndex = -100;
+      }
+    }catch(err){
+      console.log(err);
+    }
+  });
+
+  // document.addEventListener("dragover", function(){
+  //   console.log("doc dragover");
+  //   try{
+  //     var test = document.getElementById("uploaderDiv");
+  //     if (state.files){
+  //       if (document.getElementById("uploaderDiv").style.display == "none"){
+	 //        document.getElementById("uploaderDiv").style.display = "block";
+  //       }
+  //     }
+  //   }catch(err){
+  //     console.log(err);
+  //   }
+  // });
+
+
+
+  function dragover_handler(event){
+    console.log('dragover_handler');
+  }
+  function dragend_handler(event){
+    console.log('dragend_handler');
+  }
+</script>
+
+<style>
+.dropzonePreviews {
+  display: none;
+}
+
+.main {
+  background-color: #f4f5f7;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #d6d7d8;
+  /*max-width:800px;*/
+  min-width: 460px;
+  width:60%;
+  height: 40%;
+  text-align: center;
+}
+.dropzone {
+  background-color: #f4f5f7;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #d6d7d8;
+  /*max-width:800px;*/
+  /*min-width: 460px;*/
+  width:100%;
+  height: 100%;
+  text-align: center;
+  display: table;
+}
+.dropzone span {
+  margin:10px 10px 0 0;
+    padding:5px 10px
+  font-size: 20;
+  color: #323232;
+  text-align: center;
+}
+
+.dz-message {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.upload-form {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+}
+
+.dropzone img {
+    vertical-align: middle;
+}
+
+.dz-success-mark {
+  display: none;
+}
+
+.dz-error-mark {
+  display: none;
+}
+
+.dropzone-previews {
+  color: #323232;
+}
+
+.progressPanel {
+  max-width:400px;
+  min-width: 240px;
+  width:60%;
+  overflow: auto;
+  height: 200px;
+  margin-top: 100px;
+  border: solid;
+  border-color: grey;
+}
+
+.myProgress {
+  width: 80%;
+  background-color: white;
+  border: solid;
+  border-color: grey;
+  border-width: 1px;
+  border-radius: 2px;
+  height: 20px;
+  display: none;
+  margin-top: 10px;
+  position: relative;
+}
+
+.infopanel{
+  font-size: 40;
+  color: #323232;	
+	}
+
+.bar-info {
+  color:grey;
+  /*font-family: sans-serif;*/
+  font-size: 12px;
+  position: absolute;
+  top: 10%;
+}
+
+.bar-info span {
+  max-width: 600px;
+  width: 400px;
+  margin:10px 10px 0 0;
+    padding:5px 10px;
+  color: #323232;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myBar {
+  max-width: 80%
+  width: 0%;
+  height: 10%;
+  background-color: #0026ff;
+  border-radius: 2px;
+  display: none;
+  position: absolute;
+  bottom: 0;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+}
+
+.dropzone img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+@media only screen and (max-width: 500px) {
+    body {
+        overflow-y: scroll; // hide vertical
+    }
+
+    .progressPanel {
+      background-color: #e8e8e8;
+      margin:auto;
+      padding:5px 10px;
+    max-width:800px;
+    min-width: 200px;
+    width:80%;
+    height: 40%;
+    text-overflow: ellipsis;
+    margin-top: 100px;
+    border: solid;
+    border-color: grey;
+
+  }
+  .dropzone {
+    min-width: 200px;
+    margin:auto;
+      padding:5px 10px;
+    background-color: #f4f5f7;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: #d6d7d8;
+    width:80%;
+    height: 40%;
+    text-align: center;
+  }
+  .dropzone span {
+    min-width: 200px;
+    margin:auto;
+      padding:5px 10px;
+    font-size: 20;
+    color: #323232;
+    text-align: center;
+  }
+
+
+  .progressPanel {
+    overflow: auto;
+    height: 200px;
+    max-width:460px;
+    min-width: 200px;
+    width:80%;
+  }
+
+  .bar-info span {
+    min-width: 200px;
+    width: 400px;
+    margin:10px 10px 0 0;
+      padding:5px 10px;
+    color: #323232;
+    text-align: center;
+    white-space: nowrap;
+      overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+</style>
+
+<style type="text/css">
+
+
+/* ---------- GENERAL ---------- */
+
+body {
+  margin: 0;
+}
+
+a { text-decoration: none; }
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+h4, h5 {
+  line-height: 1.5em;
+  margin: 0;
+}
+
+hr {
+  background: #e9e9e9;
+    border: 0;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 1px;
+    margin: 0;
+    min-height: 1px;
+    /*width: 200px;*/
+}
+
+img {
+    border: 0;
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+input {
+  border: 0;
+  color: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    line-height: normal;
+    margin: 0;
+}
+
+p { margin: 0; }
+
+.clearfix { *zoom: 1; } /* For IE 6/7 */
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+}
+.clearfix:after { clear: both; }
+
+/* ---------- LIVE-CHAT ---------- */
+
+#live-chat {
+  bottom: 0;
+  font-size: 12px;
+  right: 24px;
+  position: fixed;
+  width: 300px;
+  display: none;
+}
+
+#live-chat header {
+  background: #293239;
+  border-radius: 5px 5px 0 0;
+  color: #fff;
+  cursor: pointer;
+  padding: 16px 24px;
+}
+
+#live-chat h4:before {
+  background: #1a8a34;
+  border-radius: 50%;
+  content: "";
+  display: inline-block;
+  height: 8px;
+  margin: 0 8px 0 0;
+  width: 8px;
+}
+
+#live-chat h4 {
+  font-size: 12px;
+}
+
+#live-chat h5 {
+  font-size: 10px;
+}
+
+#live-chat form {
+  padding: 24px;
+}
+
+#live-chat input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 8px;
+  outline: none;
+  width: 234px;
+}
+
+.chat-message-counter {
+  background: #e62727;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  display: none;
+  font-size: 12px;
+  font-weight: bold;
+  height: 28px;
+  left: 0;
+  line-height: 28px;
+  margin: -15px 0 0 -15px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 28px;
+}
+
+.chat-close {
+  background: #1b2126;
+  border-radius: 50%;
+  color: #fff;
+  display: block;
+  float: right;
+  font-size: 10px;
+  height: 16px;
+  line-height: 16px;
+  margin: 2px 0 0 0;
+  text-align: center;
+  width: 16px;
+}
+
+.chat {
+  background: #fff;
+}
+
+.chat-history {
+  height: 252px;
+  padding: 8px 24px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.chat-message {
+  margin: 16px 0;
+}
+
+.chat-message img {
+  border-radius: 50%;
+  float: left;
+}
+
+.chat-message-content {
+  margin-left: 10px;
+}
+
+.chat-time {
+  float: right;
+  font-size: 10px;
+}
+
+.chat-feedback {
+  font-style: italic;
+  margin: 0 0 0 80px;
+}
+
+</style>
+
+<style type="text/css">
+  .option-dropdown{
+
+  }
+  .option-item :hover{
+    background-color: grey;
+  }
+
+  .list-group-item :hover{
+    color: black;
+    cursor: pointer;
+  }
+
+</style>
+
+<style type="text/css">
+	.project-meta {
+		height: 480px;
+	}
+	.project-info {
+		height: 480px;
+	}
+
+	.headDir {
+		color: #3064b1;
+		margin-left: 5px;
+		margin-right: 2px;
+	}
+</style>
+
+
+<style>
+.card {
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  margin-top: 100px;
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: #777;
+}
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+</style>
+
+<style>
+.fileName {
+  margin-left: 10px;
+}
+
+.list-group{
+  margin: 2%;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.list-group-item{
+  font-size: 14px;
+  padding-left: 20px;
+}
+
+.my-btn {
+    font-family: "Lato", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    background: #00b6a6;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+}
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .userPanel {
+    	display: none;
+    }
+}
+
+</style>
+<!-- fake react -->
+<script type="text/javascript">
+
+var projectInfo = {{ value| safe}};
+console.log(JSON.stringify(projectInfo));
+
+
+function renameProject(id){
+  console.log(`rename ${id}`);
+}
+
+function deleteProject(id){
+ console.log(`delete ${id}`);
+ state.projects.splice(id, 1)
+ renderProjectList();
+}
+
+function addProject(){
+  var newProject = { name: 'test'}
+  state.projects.push(newProject);
+  renderProjectList();
+}
+
+function formClick(){
+	document.getElementById('fileDropzone').click();
+}
+//chandra
+  $(document).ready(function(){
+  $("#serachimg").click(function(){
+    $("#search").slideToggle();
+  });
+});
+//chandra
+//chandra
+ function content_submitted1(){
+    var div = document.getElementById("infopanel");
+	 div.style.display = "block";
+    div.textContent = "Project is successfully submitted";
+    var text = div.textContent;
+	var div = document.getElementById("textDiv");
+	div.style="font-size:24px";
+ }	
+//chandra
+ function content_submitted(){
+    var div = document.getElementById("infopanel");
+	div.style.display = "block"; 
+    div.textContent = "Images to be grouped in different folders before uploading";
+    var text = div.textContent;
+	var div = document.getElementById("textDiv");
+	div.style="font-size:24px";
+	div.style.display = "none";
+ }	
+//chandra
+ function content1(){
+    var div = document.getElementById("textDiv");
+	 div.style.display = "none";
+    div.textContent = "Your project is successfully submitted.1";
+    var text = div.textContent;
+	var div = document.getElementById("textDiv");
+	div.style="font-size:24px";
+ }	
+//chandra
+ function content(){
+    var div = document.getElementById("textDiv");
+	div.style.display = "none"; 
+    var text = div.textContent;
+	var div = document.getElementById("textDiv");
+	div.style="font-size:24px";
+	div.style.display = "none";
+ }
+
+function brewModal(){
+	const brewModal = document.getElementById("brewModal");
+  brewModal.style.display = "block";
+}
+
+function brewModal_finalmsg(){
+	const brewModal_finalmsg = document.getElementById("brewModal_finalmsg");
+  brewModal_finalmsg.style.display = "block";
+}
+	
+function brewModalClose(){
+	const brewModal = document.getElementById("brewModal");
+// Get the modal
+var modal = document.getElementById('brewModal');
+	modal.style.display = "none";
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+}	
+
+function brewModalSubmit(){
+	var LibTypeArr = [];
+	var elem = document.getElementsByName("libraryType");
+	console.log(elem);
+	for (var index =0; index < elem.length; index ++){
+		var check = elem[index].checked;
+		var val = elem[index].value;
+		console.log(elem[index]);
+		if (val && check){
+			LibTypeArr.push(val);
+		}
+	}
+	console.log('LibTypeArr: ', LibTypeArr);
+	createApi(LibTypeArr);
+}
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<body>
+
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/" class="w3-bar-item" style="width: 200px">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Inferencia" style="width:42px;height:42px;border:0"><p style="float: right; text-align: left; position: absolute; top: 15px; left: 65px; font-size: 18px; color: #F25907;"> Inferencia</p>
+    </a>
+  </div>
+  <div class="dropdown userPanel" style="position: fixed; top: 5px; right: 10px; width: 250px">
+    <div class=" dropdown-toggle" data-toggle="dropdown" style="float: right;">{{ user['email'] }}
+    <span class="caret"></span></div>
+    <ul class="dropdown-menu" style="left: inherit; right: 0">
+      <li><a href="/razorpaycheckout">Billing and Payments</a></li> <!-- chandra -->		
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium">
+  <a href="/razorpaycheckout" class="w3-bar-item w3-button nodecoration">Billing and Payments</a> <!-- chandra -->
+  <a href="/logout" class="w3-bar-item w3-button nodecoration">Logout</a>
+  </div>
+</div>
+
+
+<!-- Container (Contact Smy-btnection) -->
+<div class="container" style="margin-top: 100px;">
+	<div class = "row" > <div style="float:right">  <button class="btn-success" style="background-color: #00b6a6; width: 130px; height: 45px" onclick="document.location.href='/home'" ><i class="fa fa-home"></i>  All Projects</button> </div></div>
+  <div class="row" style="border:solid #f2f2f2; border-width: 1px">
+    <div class="col-sm-3 project-meta" style="background-color:#f2f2f2; color:#262626">
+
+		<div class="card">
+		  <h3> {{ object['name'] }}</h3>
+		  <p class="title" style="font-size: 12px">{{ object['description'] }}</p>
+		  <div style="margin: 24px 0;">
+<!-- 		    <a href="#"><i class="fa fa-dribbble"></i></a>
+		    <a href="#"><i class="fa fa-twitter"></i></a>
+		    <a href="#"><i class="fa fa-linkedin"></i></a>
+		    <a href="#"><i class="fa fa-facebook"></i></a>
+ -->		 </div>
+		 <br>
+		 <hr>
+			
+		 <div id="textDiv"><script> content();</script></div>	<!-- chandra added -->
+					  <div style="margin: 12px 0;">
+<!-- 		    <a href="#"><i class="fa fa-dribbble"></i></a>
+		    <a href="#"><i class="fa fa-twitter"></i></a>
+		    <a href="#"><i class="fa fa-linkedin"></i></a>
+		    <a href="#"><i class="fa fa-facebook"></i></a>
+ -->		 </div>
+		 <button type="button" title= "Click here to start training your model" id="createAPI"  onclick="brewModal()" class="btn btn-default">Brew Package</button>
+		 
+
+	  <div style="margin: 24px 0;">
+<!-- 		    <a href="#"><i class="fa fa-dribbble"></i></a>
+		    <a href="#"><i class="fa fa-twitter"></i></a>
+		    <a href="#"><i class="fa fa-linkedin"></i></a>
+		    <a href="#"><i class="fa fa-facebook"></i></a>
+ -->		 </div>
+			
+		 <button class="btn btn-default" disabled title="Upload images first and click 'Brew Package'" id="downloadPkg" onclick="downloadPkg()" ><i class="fa fa-download"></i>  Download Package</button> 
+		
+		</div>
+    </div>
+    <div class="col-sm-9 project-info">
+    	<div class="row" id="fileList">
+
+    	</div>
+		<div class="alert alert-info center-block" role="alert"  id="infopanel"><script> content_submitted();</script>
+		</div>
+	
+		<div class="row" style="height: 100%;" id="uploaderDiv1">
+			<div class="col-sm-12" style="height: 78%;padding: 2%">
+				<!-- <container class="main" style="opacity: 0.6;"> -->
+				  <div class="upload-form" id="uploadForm" style="opacity: 0.6;">
+				    <form  action = "/uploader" method = "POST"
+				      enctype = "multipart/form-data" class="dropzone"
+				      id="fileDropzone"
+				      >
+				      <!-- <img src="{{ url_for('static', filename='images/plus.png') }}" onclick="formClick()" alt="Add Files" style="width:42px;height:42px;border:0; z-index: -100; margin: 0 auto;"> -->
+				      <!-- <img src = "{{ url_for('static', filename='images/plus.png') }}" /> -->
+				      <div class="fallback">
+				        <input name="file" id="myFile" type="file" />
+				      </div>
+				    </form>
+				  </div>
+				  <container>
+				    <div class="dropzonePreviews" id="prevBox">
+				    </div>
+				  </container>
+
+				<!-- </container> -->
+			</div>
+		</div>
+    </div>
+  </div>
+</div>
+
+<div id="live-chat">
+
+    <header id= "notifHeader" class="clearfix">
+
+      <!-- <a href="#" id="closeNotif" class="chat-close">x</a> -->
+      <div class="row">
+	      <div class="col-sm-6"><h4>Upload</h4></div>
+	      <div class="col-sm-6" id="totalProgressText" style="color: white; text-align: right;">100%</div>
+      </div>
+      <div style="width: 100%">
+      	<div style="background-color: green; width: 0%; height: 10px; text-align: center; font-size: 8px; color: white" id="totalProgress" ></div>
+      </div>
+
+      <!-- <span class="chat-message-counter" id="notifCounter" style="display: block"></span> -->
+
+    </header>
+
+    <div id="myNotif" class="chat" style="display: none">
+
+      <div class="chat-history" id="progressPanel">
+        </div> <!-- end chat-message -->
+
+        <hr>
+
+      </div> <!-- end chat-history -->
+
+    </div> <!-- end chat -->
+
+
+
+
+<div class="row w3-modal" style="padding: 0; display: block; visibility: hidden;" id="uploaderDiv" ondragover="dragover_handler(event);" ondragend="dragend_handler(event);">
+  <div class="col-sm-12" style="height: 100%;padding: 5%">
+    <!-- <container class="main" style="opacity: 0.6;"> -->
+      <div class="upload-form" id="uploadForm" style="opacity: 0.6;">
+        <form  action = "/uploader" method = "POST"
+          enctype = "multipart/form-data" class="dropzone"
+          id="fileDropzone"
+          >
+          <!-- <img src="{{ url_for('static', filename='images/plus.png') }}" onclick="formClick()" alt="Add Files" style="width:42px;height:42px;border:0; z-index: -100; margin: 0 auto;"> -->
+          <!-- <img src = "{{ url_for('static', filename='images/plus.png') }}" /> -->
+          <div class="fallback">
+            <input name="file" id="myFile" type="file" />
+          </div>
+        </form>
+      </div>
+      <container>
+        <div class="dropzonePreviews" id="prevBox">
+        </div>
+      </container>
+
+    <!-- </container> -->
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<div id="brewModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="brewModalClose()" >&times; </span>
+    <div class="form-group">
+		<div class="container">
+		  <dt>Choose one or more platforms:</dt>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" value="iOS"> iOS</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" value="Andriod"> Android</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" value="Raspbian" > Raspbian</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" value="Others" > Others</label>
+		    </div>
+
+			<div class="btn-toolbar">
+		    <button type="submit" onclick="brewModalSubmit()" class="btn btn-default" style="width: 200px;">Submit</button>
+    <p style="color: red" id = "addModalNote"></p>
+            <button type="close"  onclick="brewModalClose()" class="btn btn-default" style="width: 200px;" data-dismiss="modal">Close</button>		
+
+			</div>	
+		</div>
+    </div>
+   </div>
+ </div>
+
+<!-- Chandra Modal -->
+<div id="brewModal_finalmsg" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="brewModalClose()" >&times; </span>
+    <div class="form-group">
+		<div class="container">
+		  <dt>Chandra: Choose one or more platforms:</dt>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+			<div class="btn-toolbar">
+		    <button type="submit" onclick="brewModalSubmit()" class="btn btn-default" style="width: 200px;">Submit</button>
+    <p style="color: red" id = "addModalNote"></p>
+            <button type="close"  onclick="brewModalClose()" class="btn btn-default" style="width: 200px;" data-dismiss="modal">Close</button>		
+
+			</div>	
+		</div>
+    </div>
+   </div>
+ </div>
+	
+
+	
+<script type="text/javascript">
+
+
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+// Change style of navbar on scroll
+window.onscroll = function() {myFunction()};
+function myFunction() {
+    var navbar = document.getElementById("myNavbar");
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+    } else {
+        navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
+    }
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+function downloadPkg(){
+	var win = window.open('/download/{{ package }}', '_blank');
+if (win) {
+    //Browser has allowed it to be opened
+    win.focus();
+} else {
+    //Browser has blocked it
+    alert('Please allow popups for this website');
+}
+}
+</script>
+
+<!--
+To use this code on your website, get a free API key from Google.
+Read more at: https://www.w3schools.com/graphics/google_maps_basic.asp
+-->
+<script type="text/javascript">
+  (function() {
+
+  $('#live-chat header').on('click', function() {
+    $('.chat').slideToggle(300, 'swing');
+    $('.chat-message-counter').fadeToggle(300, 'swing');
+  });
+
+  $('.chat-close').on('click', function(e) {
+    e.preventDefault();
+    $('#live-chat').fadeOut(300);
+  });
+
+}) ();
+</script>
+
+<script type="text/javascript">
+//
+// const state = {
+//   project: {name: "testProject", createdAt: "2018-02-03", description: "my new project"},
+//   files: [ {name: 'folder', type: 1, id: 11 }, {name: 'file1', type: 2, id: 12}, {name: 'file2', type: 2, id: 13} ],
+//   selectedDir: {name: 'testProject', type: 1, id: 0 },
+//   parentDir: {id: 1, name: ""},
+// }
+function render(state){
+
+  if (!state.files || state.files.length == 0){
+  	document.getElementById("createAPI").disabled = true;
+    document.getElementById("createAPI").title = "Drag and drop image on right side space";
+    document.getElementById("downloadPkg").disabled = true;
+    document.getElementById("uploaderDiv1").style.display = "block"
+  }
+  else {
+    console.log('hiding upload 1');
+     //document.getElementById("createApi").disabled = true;
+    document.getElementById("uploaderDiv1").style.display = "none";
+    //chandra code
+    var is_training_completed = {{object['is_completed'] }};
+    var is_project_submitted = {{object['is_submitted'] }};	
+	//string.
+    console.log('chandra: ' + is_training_completed);		
+    document.getElementById("downloadPkg").title = "Your model is getting trained!";	
+
+	if(Boolean(is_project_submitted))
+	{
+       //document.getElementById("downloadPkg").disabled = false;		
+       document.getElementById("downloadPkg").title = "Your model is getting trained!";		
+       document.getElementById("createAPI").disabled = true;		
+       document.getElementById("createAPI").title = "You already submitted the model to train!";
+		if(Boolean(is_training_completed))
+		{
+		   document.getElementById("downloadPkg").disabled = false;		
+		   document.getElementById("downloadPkg").title = "Click here to download the trained model!";		
+		   document.getElementById("createAPI").disabled = true;		
+		   document.getElementById("createAPI").title = "You already submitted the model to train!";			
+		}		
+	}	
+  }
+ //chandra code ends
+  var projectList = state.files.map((item,index) => {
+    return projectListItem(item, index)
+  })
+
+  var addOption = '<li class="list-group-item"><div class="row"><div class="col-sm-12" style="text-align:center" onclick="addProject()"><i class="fa fa-plus"></i></div></div></li>'
+  return(projectList.join(''));
+
+}
+
+
+function projectListItem(fileMeta, index){
+
+  var name = fileMeta['name'];
+  var type = fileMeta['type'];
+
+  if (type == 1) {
+    return `<a onclick="openFolder(${index})" class="list-group-item">
+    <span class="glyphicon glyphicon-folder-close"></span>  <span class="fileName"> ${name}</span></a>`
+  }
+  else {
+    return `<a href="#" class="list-group-item">
+    <span class="glyphicon glyphicon-file"></span>  <span class="fileName"> ${name}</span></a>`
+  }
+}
+
+function getPathComponent(){
+  
+  const path = state.selectedDir.id;
+  if (!path){
+    return `<span class="fileName"> /</span>`
+  }
+
+  const pathParts = path.split('/');
+  var pathComponent = ''
+  if (pathParts.length > 1){
+    pathComponent = `<a class="headDir" onclick="openFolderLink('')">...</a>/`;
+  }
+  for(var index = 0; index< pathParts.length; index++){
+    var link = pathParts[index];
+    for(var sub_index = 0; sub_index <= index; sub_index++){
+      if (sub_index === 0){
+        link = pathParts[sub_index];
+      }
+      else{
+        link = link + '/' + pathParts[sub_index];
+      }
+
+    } 
+    if (link) {
+      pathComponent = pathComponent + `<a class="headDir" onclick="openFolderLink('${link}')">${pathParts[index]}</a>/`;
+    }
+  }
+  return `<span class="fileName">${pathComponent}</span>`
+}
+
+function renderProjectList(){
+  const pathComponent = getPathComponent();
+  var defaultContent  = `<div style="margin-left:0px;font-weight: bold; height: 40px; padding-left:10px;display: table;"><div style="display: table-cell; vertical-align: middle;"><span class="glyphicon glyphicon-folder-open"></span>${pathComponent}</div></div>`;
+  document.getElementById("fileList").innerHTML = defaultContent + render(state);// + defaultContent;
+}
+
+renderProjectList();
+</script>
+
+<script type="text/javascript">
+
+  document.getElementById("uploaderDiv").addEventListener("dragleave", function(){
+    console.log("doc dragleave");
+    try{
+      var test = document.getElementById("uploaderDiv");
+      console.log("hiding ", test);
+      if (document.getElementById("uploaderDiv").style.visibility == 'visible'){
+  	  	document.getElementById("uploaderDiv").style.visibility = 'hidden';
+      }
+    }catch(err){
+      console.log(err);
+    }
+  });
+
+  document.getElementById("uploaderDiv").addEventListener("drop", function(){
+    console.log("doc dragleave");
+    try{
+      var test = document.getElementById("uploaderDiv");
+      console.log("hiding ", test);
+      if (document.getElementById("uploaderDiv").style.visibility == 'visible'){
+  	  	document.getElementById("uploaderDiv").style.visibility = 'hidden';
+      }
+    }catch(err){
+      console.log(err);
+    }
+  });
+
+</script>
+
+<script type="text/javascript">
+
+function getProjectInfo(){
+    if(!state.project){
+        state.project = {};
+        const pid = {{ object['id'] }};
+        state.project.name = pid.toString();
+    }
+    console.log('my state', state)
+    console.log('india is great')	
+    const url = '/api/project/'+state.project.name;
+    document.write(url)
+    getData(url).then(result => {
+        console.log(result);
+        const response = result;
+        state = response.data;
+        // state.parentDir = state.selectedDir
+        // state.selectedDir = state.files[index];
+        renderProjectList();
+    })
+    .catch(err => console.log(err));;
+}
+
+function openFolderLink(path) {
+    console.log('my state', window.state);
+    const uuid = path.replace(/\//g, '~slash~');
+    const url = '/api/directory/'+uuid;
+    getData(url).then(result => {
+        console.log(result);
+        const response = result;
+        state = response.data;
+        renderProjectList();
+    })
+    .catch(err => console.log(err));;
+}
+
+function openFolder(index){
+    state.parentDir = state.selectedDir;
+    state.selectedDir = state.files[index];
+    console.log('my state', window.state)
+    const uuid = (state.selectedDir.id).replace(/\//g, '~slash~');
+    const url = '/api/directory/'+uuid;
+    getData(url).then(result => {
+  	    console.log(result);
+        const response = result;
+        state = response.data;
+        renderProjectList();
+  	})
+  	.catch(err => console.log(err));;
+}
+
+//chandra	
+function disableBtn() {
+    document.getElementById("createAPI").disabled = true;
+	document.getElementById("createAPI").title = "You already submitted the model to train";
+}
+	
+//chandra	
+function enableBtn() {
+    document.getElementById("downloadPkg").disabled = false;
+	document.getElementById("downloadPkg").title = "Click here to download the trained model!";
+}	
+
+function createApi(packageList){
+
+	var r = confirm("Are you sure you want to submit the project?");
+	if (r == true){
+			//content1(); //chandra
+		content_submitted1(); //chandra
+		disableBtn(); //chandra
+		//enableBtn(); //chandra
+		//Below two lines is to close the pop up
+		var modal1 = document.getElementById('brewModal');
+			modal1.style.display = "none";
+		const url = '/api/makeApi/'+ {{ object['id'] }};
+		console.log(url)
+	    postData(url, {packageList}	).then(result => {
+	  	    console.log(result);
+	        const response = result;
+	        state = response.data;
+	        renderProjectList();
+			console.log('my state', window.state)
+			window.close();	
+		document.getElementById("createAPI").disabled = true; //chandra
+	  	})
+	  	.catch(err => console.log(err));;
+	}
+
+}
+
+function postData(url, data){
+	console.log(data);
+	axios({
+		method: 'post',
+		url: url,
+		data: {
+			data,
+		},
+	})
+	.then(result => {
+	    console.log(result);
+	})
+	.catch(err => console.log(err));
+}
+
+function getData(url){
+	return axios({
+		method: 'get',
+		url: url,
+		data: {},
+	});
+
+}
+</script>
+
+</body>
+</html>

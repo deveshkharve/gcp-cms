@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Inferencia SignUp</title>
+	<meta charset="UTF-8">
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon.ico')}}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css')}}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css')}}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css')}}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css')}}">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100" style=" background-image: url({{ url_for('static', filename='images/parallax.png')}});" >
+			<div class="wrap-login100">
+				<div class="login100-pic">
+					<a href="/">
+					 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.10000038146972656 6.599998474121094 200.09999084472656 186.69998168945312" role="img" preserveAspectRatio="xMidYMid meet" stroke="#f48642" fill="#f48642" style="stroke-width: 0px;">
+    <g>
+        <path d="M177.2 82c-5.4 0-10.4 2-14.4 5l-30.5-28.7c5-5.3 8.4-13 8.4-21 0-17-13.7-30.7-30.8-30.7S79.1 20.2 79.1 37.2c0 13 8.4 24.4 19.8 28.7l-3.7 24.4c-7.7.3-13.7 6.3-13.7 14v1.7L39 116.7c-3-7.3-10.1-12.4-18.8-12.4-11.1 0-20.1 9-20.1 20s9 20 20.1 20c7 0 13.1-3.3 16.8-8.7l64.7 31.4c-.7 2-1 4-1 6.3 0 11 9 20 20.1 20s20.1-9 20.1-20-9-20-20.1-20c-1 0-2 0-3 .3l-12.4-39.1c2.3-2 3.7-5 4.4-8l45.2.7c1.3 11.4 10.7 20 22.4 20 12.4 0 22.8-10 22.8-22.7S189.6 82 177.2 82zm-67.7-14.1c6.7 0 13.1-2.3 18.1-6L158.5 91c-2 3-3.7 6.3-4 10l-45.2-.3c-1.3-4.3-4.4-8-8.7-9.7l3.7-23.7c1.6.6 3.2.6 5.2.6zm2.1 87.5c-3.4 1.7-6 4-8 7l-64.3-31.7c.7-2 1-4 1-6.3v-2l43.2-11c2.3 4.3 7 7 12.4 7 1.7 0 3.4-.3 4.7-.7l11 37.7z"></path>
+    </g>
+    </svg></a>
+    <span class="w3-center" style="color:grey; font-size: 22px">Inferencia</span>
+				</div>
+
+				<form class="login100-form validate-form" action="/signup" method="POST">
+					<span class="login100-form-title">
+						User Registration
+					</span>
+
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="username" placeholder="FullName">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="email" name="email" placeholder="Email">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" name="password" placeholder="Password">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" name="passConfirm" placeholder="Confirm Password">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100">
+						<!---<div class="g-recaptcha" data-sitekey="6LfopkYUAAAAAKU2mBL9_axucJW7oCyr5AThhgz6"></div>-->
+						<div class="g-recaptcha" data-sitekey="6LcDG0gUAAAAAKGofeV3XBwPncVMyfh3fyvk4XCw"></div>
+					</div>
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Signup
+						</button>
+						<p style="color:red; font:8px"> {{ state }}</p>
+					</div>
+
+					<div class="text-center p-t-12">
+						<span class="txt1">
+							Already have an account?
+						</span>
+						<a class="txt2" href="/signin">
+							click here
+						</a>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	
+
+	
+<!--===============================================================================================-->	
+	<script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+<!--===============================================================================================-->
+	<script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
+	<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+<!--===============================================================================================-->
+	<script src="{{ url_for('static', filename='vendor/select2/select2.min.js')}}"></script>
+<!--===============================================================================================-->
+	<script src="{{ url_for('static', filename='vendor/tilt/tilt.jquery.min.js')}}"></script>
+	<script >
+		$('.js-tilt').tilt({
+			scale: 1.1
+		})
+	</script>
+<!--===============================================================================================-->
+	<script src="{{ url_for('static', filename='js/main.js')}}"></script>
+
+</body>
+</html>

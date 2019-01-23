@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+<title>Inferencia</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<head>
+<script>
+	var state = {}
+	const user = {{ value| safe }}
+	console.log('user: ', user);
+</script>
+</head>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url('{{ url_for('static', filename='images/parallax.png') }}');
+    min-height: 100%;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+    background-image: url("{{ url_for('static', filename='images/parallax.png') }}");
+    min-height: 400px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+    background-image: url("{{ url_for('static', filename='images/parallax.png') }}");
+    min-height: 400px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+</style>
+
+
+<script src="../static/js/dropzone.js"></script>
+
+<script>
+  var prevBox = document.getElementById("previewsContainer");
+  Dropzone.options.fileDropzone = {
+  dictDefaultMessage: "drop file from your computer",
+  previewsContainer: "#prevBox", // The name that will be used to transfer the file
+  createImageThumbnails:false,
+  clickable:true,
+  init : function() {
+    myDropzone = this;
+
+      this.on("addedfile", function(file) {
+    /* Maybe display some more file information on your page */
+
+      const notif = document.getElementById("live-chat");
+      notif.style.display= "block";
+      const notifCounter = document.getElementById("notifCounter");
+      notifCounter.innerHTML = myDropzone.files.length;
+
+      console.log(file);
+      try{
+        var infoContainer = document.createElement("div");
+        infoContainer.setAttribute("id", "myProgress"+file.upload.uuid);
+        infoContainer.setAttribute("class", "chat-message clearfix");
+
+        var loadingContainer = document.createElement("div");
+        loadingContainer.setAttribute("id", "myProgress"+file.upload.uuid);
+        loadingContainer.setAttribute("class", "chat-message-content clearfix");
+
+        if (file.fullPath){
+          loadingContainer.innerHTML=`<i id = "state${file.upload.uuid}" style="color:blue" class="fa fa-clock-o"></i>&nbsp;<span>&nbsp;${file.fullPath}</span><hr>`;
+        }else{
+          loadingContainer.innerHTML=`<i id = "state${file.upload.uuid}" style="color:blue" class="fa fa-clock-o"></i>&nbsp;<span>&nbsp;${file.name}</span><hr>`;
+        }
+
+        infoContainer.appendChild(loadingContainer);
+        var progressPanel = document.getElementById("progressPanel");
+        progressPanel.appendChild(infoContainer);
+
+      }catch(err){
+        console.log(err);
+      }
+    });
+        //Restore initial message when queue has been completed
+        this.on("sending", function(file, xhr, data) {
+        // if file is actually a folder
+        if(file.fullPath){
+          data.append("fullPath", file.fullPath);
+        }
+    });
+        this.on('uploadprogress', function (file, progress) {
+    });
+
+
+    },
+
+    uploadprogress: function(file, progress, bytesSent) {
+      var done = progress;
+      console.log(file);
+      var state = document.getElementById('state'+file.upload.uuid);
+      state.setAttribute("class", "fa fa-check");
+      state.style.color='#159b1c'
+      // myProgress.innerText=file.name;
+    }
+};
+</script>
+<style>
+.dropzonePreviews {
+  display: none;
+}
+
+.dropzone {
+  background-color: #f4f5f7;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #d6d7d8;
+  max-width:800px;
+  min-width: 460px;
+  width:60%;
+  height: 40%;
+  text-align: center;
+}
+.dropzone span {
+  margin:10px 10px 0 0;
+    padding:5px 10px
+  font-size: 20;
+  color: #323232;
+  text-align: center;
+}
+
+.upload-form {
+  display: inline-block;
+}
+
+.dz-success-mark {
+  display: none;
+}
+
+.dz-error-mark {
+  display: none;
+}
+
+.dropzone-previews {
+  color: #323232;
+}
+
+.progressPanel {
+  max-width:400px;
+  min-width: 240px;
+  width:60%;
+  overflow: auto;
+  height: 200px;
+  margin-top: 100px;
+  border: solid;
+  border-color: grey;
+}
+
+.myProgress {
+  width: 80%;
+  background-color: white;
+  border: solid;
+  border-color: grey;
+  border-width: 1px;
+  border-radius: 2px;
+  height: 20px;
+  display: none;
+  margin-top: 10px;
+  position: relative;
+}
+
+.bar-info {
+  color:grey;
+  font-family: sans-serif;
+  font-size: 12px;
+  position: absolute;
+  top: 10%;
+}
+
+.bar-info span {
+  max-width: 600px;
+  width: 400px;
+  margin:10px 10px 0 0;
+    padding:5px 10px;
+  color: #323232;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myBar {
+  max-width: 80%
+  width: 0%;
+  height: 10%;
+  background-color: #0026ff;
+  border-radius: 2px;
+  display: none;
+  position: absolute;
+  bottom: 0;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+}
+
+.dropzone img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+
+@media only screen and (max-width: 500px) {
+    body {
+        overflow-y: scroll;
+    }
+
+    .progressPanel {
+		background-color: #e8e8e8;
+		margin:auto;
+		padding:5px 10px;
+		max-width:800px;
+		min-width: 200px;
+		width:80%;
+		height: 40%;
+		text-overflow: ellipsis;
+		margin-top: 100px;
+		border: solid;
+		border-color: grey;
+
+	}
+  .dropzone {
+		min-width: 200px;
+		margin:auto;
+		padding:5px 10px;
+		background-color: #f4f5f7;
+		border-style: dashed;
+		border-width: 1px;
+		border-color: #d6d7d8;
+		width:80%;
+		height: 40%;
+		text-align: center;
+  }
+  .dropzone span {
+		min-width: 200px;
+		margin:auto;
+		padding:5px 10px;
+		font-size: 20;
+		color: #323232;
+		text-align: center;
+  }
+
+
+  .progressPanel {
+	    overflow: auto;
+	    height: 200px;
+	    max-width:460px;
+	    min-width: 200px;
+	    width:80%;
+  }
+
+  .bar-info span {
+		min-width: 200px;
+		width: 400px;
+		margin:10px 10px 0 0;
+		padding:5px 10px;
+		color: #323232;
+		text-align: center;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+  }
+}
+</style>
+
+<style type="text/css">
+
+
+/* ---------- GENERAL ---------- */
+
+body {
+  margin: 0;
+}
+
+a { text-decoration: none; }
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+h4, h5 {
+  line-height: 1.5em;
+  margin: 0;
+}
+
+hr {
+  background: #e9e9e9;
+    border: 0;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 1px;
+    margin: 0;
+    min-height: 1px;
+    width: 200px;
+}
+
+img {
+    border: 0;
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+input {
+  border: 0;
+  color: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    line-height: normal;
+    margin: 0;
+}
+
+p { margin: 0; }
+
+.clearfix { *zoom: 1; } /* For IE 6/7 */
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+}
+.clearfix:after { clear: both; }
+
+/* ---------- LIVE-CHAT ---------- */
+
+#live-chat {
+  bottom: 0;
+  font-size: 12px;
+  right: 24px;
+  position: fixed;
+  width: 300px;
+  display: none;
+}
+
+#live-chat header {
+  background: #293239;
+  border-radius: 5px 5px 0 0;
+  color: #fff;
+  cursor: pointer;
+  padding: 16px 24px;
+}
+
+#live-chat h4:before {
+  background: #1a8a34;
+  border-radius: 50%;
+  content: "";
+  display: inline-block;
+  height: 8px;
+  margin: 0 8px 0 0;
+  width: 8px;
+}
+
+#live-chat h4 {
+  font-size: 12px;
+}
+
+#live-chat h5 {
+  font-size: 10px;
+}
+
+#live-chat form {
+  padding: 24px;
+}
+
+#live-chat input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 8px;
+  outline: none;
+  width: 234px;
+}
+
+.chat-message-counter {
+  background: #e62727;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  display: none;
+  font-size: 12px;
+  font-weight: bold;
+  height: 28px;
+  left: 0;
+  line-height: 28px;
+  margin: -15px 0 0 -15px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 28px;
+}
+
+.chat-close {
+  background: #1b2126;
+  border-radius: 50%;
+  color: #fff;
+  display: block;
+  float: right;
+  font-size: 10px;
+  height: 16px;
+  line-height: 16px;
+  margin: 2px 0 0 0;
+  text-align: center;
+  width: 16px;
+}
+
+.chat {
+  background: #fff;
+}
+
+.chat-history {
+  height: 252px;
+  padding: 8px 24px;
+  overflow-y: scroll;
+}
+
+.chat-message {
+  margin: 16px 0;
+}
+
+.chat-message img {
+  border-radius: 50%;
+  float: left;
+}
+
+.chat-message-content {
+  margin-left: 10px;
+}
+
+.chat-time {
+  float: right;
+  font-size: 10px;
+}
+
+.chat-feedback {
+  font-style: italic;
+  margin: 0 0 0 80px;
+}
+
+</style>
+
+<style type="text/css">
+  .option-dropdown{
+
+  }
+  .option-item :hover{
+    background-color: grey;
+  }
+
+  .list-group-item :hover{
+    color: black;
+    cursor: pointer;
+  }
+
+  html *
+  {
+     font-size: 18px !important;
+  }
+</style>
+
+
+<style>
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .userPanel {
+    	display: none;
+    }
+}
+</style>
+
+<!-- fake react -->
+<script>
+
+function render(state){
+
+  var projectList = state.projects.map((item,index) => {
+    return projectListItem(item, index)
+  })
+
+  if (projectList){
+  	var header = '<li class="list-group-item">'+
+  '<div class="row">'+
+  '<div class="col-sm-11">'+
+  '<div class="col-sm-6"><p style="float:left;"><b>Project Name</b></p></div><div class="col-sm-6"><p style="width:auto ;float:right; text-align:center"><b>Created At</b></p></div>'+
+  '</li>';
+
+	  var addOption = '<li class="list-group-item"><div class="row"><div class="col-sm-12" style="font-size: 18px; text-align:center" onclick="addProjectModal()"><i class="fa fa-plus"></i></div></div></li>'
+	  return( header + projectList.join('') + addOption);
+  }
+  else{
+  	 var addOption = '<li class="list-group-item"><div class="row"><div class="col-sm-12" style="text-align:center" onclick="addProjectModal()"><i class="fa fa-plus"></i></div></div></li>'
+	  return(addOption);	
+  }
+
+}
+
+
+function projectListItem(projectMeta, index){
+
+  return '<li class="list-group-item">'+
+  '<div class="row">'+
+  '<div class="col-sm-11"><a style="font-size:18px" onclick="openProject('+index+')">'+projectMeta.name+'</a> <p style="width:auto ;float:right; text-align:center">'+ projectMeta.createdAt +'</p></div>'+
+  '<div class="col-sm-1">  <div class="dropdown show"  style="height:20px;">'+
+  '<a class="btn btn-secondary dropdown-toggle" style="border:0px; padding:0px" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+  '<i class="fa fa-ellipsis-v" style="position: relative; display: block; padding: 10px 15px; margin-bottom: -1px; width:20px; float:right"></i>'+
+  '</a>'+
+  ''+
+  '<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">'+
+  '<li role="presentation" onclick="openProject('+index+')"><a role="menuitem" tabindex="-1" href="#">Open</a></li>'+
+  '<li role="presentation" onclick=renameProjectModal('+index+')><a role="menuitem" tabindex="-1" href="#">Rename</a></li>'+
+  '<li role="presentation" onclick=deleteProject('+index+')><a role="menuitem" tabindex="-1" href="#">Delete</a></li>'+
+  '</ul>'+
+  '</div></div>'+
+  '</div></li>'
+}
+
+function renderProjectList(){
+  // var defaultContent  = document.getElementById("projectList").innerHTML;
+   document.getElementById("projectList").innerHTML = render(state);// + defaultContent;
+}
+
+function openProject(index){
+  console.log('openProject',  index)
+  const project = state.projects[index];
+  window.location = `/project/${project.id}`
+}
+
+function renameProjectModal(id){
+  console.log(`rename ${id}`);
+  currentId = id;
+  document.getElementById('renameModalValue').value = state.projects[id].name
+  renameModal.style.display = "block";
+}
+
+function renameProject(){
+  console.log(`rename ${currentId}`);
+  // var renameProjectVal = document.getElementById('renameModalValue');
+  // state.projects[currentId].name = renameProjectVal.value;
+  // renderProjectList();
+
+  var renameProjectVal = document.getElementById('renameModalValue').value;
+	if(renameProjectVal && '' !== renameProjectVal.trim() ){
+  	var project = state.projects[currentId];
+  	console.log(state.projects[currentId]);
+    const currProject = state.projects[currentId];
+    console.log('currProject', currProject);
+    const projectId = currProject['id']
+    const projectName = renameProjectVal
+    if(projectName && '' !== projectName.trim() ){
+      const data = {
+        operation: 'rename',
+        name: projectName,
+        id: projectId,
+      }
+      const url = `/api/user/project/${user.id}`;
+      postData(url, data).then((result)=>{
+        console.log(result)
+        state.projects = result.data;
+        renderProjectList();
+      })
+    }
+	}
+
+	renameModal.style.display = "none";
+	document.getElementById('renameModalValue').value = '';
+	currentId = -1;
+
+}
+
+function deleteProject(id){
+  var r = confirm("Are you sure you want to delete this project?");
+    if (r == true) {
+         console.log(`delete ${id}`);
+         const project = state.projects[id];
+         const projectId = project['id']
+         const projectName = project['name']
+         if(projectName && '' !== projectName.trim() ){
+            const data = {
+              operation: 'delete',
+              name: projectName,
+              id: projectId,
+            }
+            const url = `/api/user/project/${user.id}`;
+            postData(url, data).then((result)=>{
+              console.log(result)
+              state.projects = result.data;
+              renderProjectList();
+        })
+      }
+    } 
+}
+
+function addProjectModal(){
+  addModal.style.display = "block";
+}
+
+function clearModalState(targetEl){
+  document.getElementById("addModalSubmit").disabled = false;
+  document.getElementById("renameModalSubmit").disabled = false;
+  document.getElementById("addModalNote").innerText = "";
+  document.getElementById("renameModalNote").innerText = "";
+}
+
+function projectNameChange(targetEl){
+  document.getElementById("addModalSubmit").disabled = false;
+  document.getElementById("renameModalSubmit").disabled = false;
+  console.log('projectNameChange', targetEl);
+  document.getElementById("addModalNote").innerText = "";
+  document.getElementById("renameModalNote").innerText = "";
+  var newProjectName = targetEl.value;
+  state.projects.map((project) => {
+      if(newProjectName == project.name){
+          document.getElementById("addModalNote").innerText = "Project should be unique.";
+          document.getElementById("renameModalNote").innerText = "Project should be unique.";
+          document.getElementById("addModalSubmit").disabled = true;
+          document.getElementById("renameModalSubmit").disabled = true;
+      }
+    })
+}
+
+function addProject(){
+	var newProjectName = document.getElementById('addProjectName').value;
+	var newProjectDesc = document.getElementById('addProjectDesc').value;
+
+	//chandra
+	if (document.getElementById('free').checked) {
+	  var newProjectPackage = document.getElementById('free').value;
+	}
+	if (document.getElementById('247').checked) {
+	 var newProjectPackage = document.getElementById('247').value;
+	}
+	if (document.getElementById('custom').checked) {
+	 var newProjectPackage = document.getElementById('custom').value;
+	}
+	
+  document.getElementById("addModalNote").innerText = "";
+  state.projects.map((project) => {
+      if(newProjectName == project.name){
+          document.getElementById("addModalNote").innerText = "Project should be unique.";
+          return false;
+      }
+    })
+  
+
+	if(newProjectName && '' !== newProjectName.trim() ){
+		const data = {
+			operation: 'add',
+			name: newProjectName,
+			description: newProjectDesc,
+			package: newProjectPackage,
+		}
+		const url = `/api/user/project/${user.id}`;
+			
+		postData(url, data).then((result)=>{
+			state.projects = result.data;
+			renderProjectList();
+		})
+	}
+	addModal.style.display = "none";
+	document.getElementById('addProjectName').value = '';
+	document.getElementById('addProjectDesc').value = '';
+}
+
+
+
+function formClick(){
+	document.getElementById('fileDropzone').click();
+}
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar" id="myNavbar">
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a href="/" class="w3-bar-item" style="width: 200px">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Inferencia" style="width:42px;height:42px;border:0"><p style="float: right; color: #F25907; text-align: left; position: absolute; top: 15px; left: 65px; font-size: 18px;"> Inferencia</p>
+    </a>
+  </div>
+  <div class="dropdown userPanel" style="position: fixed; top: 5px; right: 10px; width: 250px">
+    <div class=" dropdown-toggle" data-toggle="dropdown" style="float: right;">{{ user['email'] }}
+    <span class="caret"></span></div>
+    <ul class="dropdown-menu" style="left: inherit; right: 0">
+      <li><a href="/razorpaycheckout">Billing and Payments</a></li>		
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium">
+	<a href="/razorpaycheckout" class="w3-bar-item w3-button nodecoration">Billing and Payments</a>	  
+	<a href="/logout" class="w3-bar-item w3-button nodecoration">Logout</a>
+  </div>
+</div>
+
+
+<!-- Container (Contact Section) -->
+<div class="w3-content w3-container w3-padding-64" id="contact">
+  <div class="container-fluid">
+  <h3 class="w3-center">My Projects</h3>
+  <ul class="list-group" id="projectList">
+    <li class="list-group-item" onclick="addProject()">
+    </li>
+  </ul>
+</div>
+</div>
+
+<!-- The Modal -->
+<div id="renameModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="form-group">
+	  <label for="renameModalValue">Rename</label>
+	  <input type="text" class="form-control" id="renameModalValue" onfocus="clearModalState(this)" onblur="projectNameChange(this)">
+	  <br>
+	  <button type="submit" id="renameModalSubmit" onclick="renameProject()" class="btn btn-default">Submit</button>
+    <p style="color: red" id = "renameModalNote"></p>
+	</div>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="addModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="form-group">
+	  <label for="usr">Project Name</label>
+	  <input type="text" class="form-control" id="addProjectName" onfocus="clearModalState(this)" onblur="projectNameChange(this)" onchange="projectNameChange(this)" >
+	  <label for="usr">Description</label>
+	  <textarea class="form-control" rows="5" id="addProjectDesc"></textarea>
+	  <br>
+  <!-- chandra 		
+	  <div style="margin: 10px 0;"> </div>-->
+		<p><strong>Pricing : </strong><a href="/razorpaycheckout" target="_blank"><strong> Look for full pricing details</strong></a></p>	
+		    <div class="radio">
+		      <label><input type="radio" id = "free" name="packageType" value="free" checked='' > Free</label>
+		    </div> 	
+			<div class="radio">
+		      <span title="Please perform the payment to use this package" ><label><input type="radio" id = "247" name="packageType" value="247"  disabled="disabled" > $247</label></span>
+				<!--chandra -->
+				<form action="/purchase" method="POST">		
+				<script
+				function  addProject1(){	
+					src="https://checkout.razorpay.com/v1/checkout.js"
+					data-key="rzp_test_Rk087QhzzucsU4"
+					data-amount="100"
+				}
+				></script>
+				<input type="hidden" value="Hidden Element" name="hidden">
+				</form>	
+				<!--end chandra -->
+		    </div> 
+		    <div class="radio">
+		      <span title="Contact: info@mycompany.ai" ><label><input type="radio" name="packageType" id = "custom" value="custom" disabled="disabled" > Custom</label></span>
+		    </div>	
+		<p>
+		<strong>Library type :</strong>	
+		</p>	
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" id = "ios" value="iOS" checked='' disabled="disabled"> Objects Classification</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" id = "android" value="Andriod" disabled="disabled"> Image similarity</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" id = "rasbian" value="Raspbian" disabled="disabled" > Object Counting</label>
+		    </div>
+		    <div class="checkbox">
+		      <label><input type="checkbox" name="libraryType" id = "others" value="Others" disabled="disabled"> Image Aesthetics</label>
+		    </div>		
+	
+	  <button type="submit" id="addModalSubmit" onclick="addProject()" class="btn btn-default">Submit</button>
+		
+	
+    <p style="color: red" id = "addModalNote"></p>		
+	</div>
+  </div>
+</div>  
+
+</div>
+<!-- Add Google Maps -->
+<script>
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+// Change style of navbar on scroll
+window.onscroll = function() {myFunction()};
+function myFunction() {
+    var navbar = document.getElementById("myNavbar");
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+    } else {
+        navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
+    }
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+
+<script  type="text/javascript">
+// Get the modal
+var renameModal = document.getElementById('renameModal');
+var addModal = document.getElementById('addModal');
+
+var currentId = -1;
+
+// Get the <span> element that closes the modal
+var spanList = document.getElementsByClassName("close");
+// When the user clicks on <span> (x), close the modal
+for(var index = 0; index < spanList.length; index++){
+	spanList[index].onclick = function() {
+	    renameModal.style.display = "none";
+	    addModal.style.display = "none";
+	}
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == renameModal || event.target == addModal) {
+        renameModal.style.display = "none";
+    	addModal.style.display = "none";
+    }
+}
+</script>
+
+<script type="text/javascript">
+	
+
+
+function postData(url, data){
+	console.log(data);
+	return axios({
+		method: 'post',
+		url: url,
+		data: {
+			data,
+		},
+	})
+}
+
+function getData(url){
+	return axios({
+		method: 'get',
+		url: url,
+		data: {},
+	});
+
+}
+</script>
+
+<script type="text/javascript">
+	
+
+function getProjects(){
+    console.log('my state', window.state);
+    const url = `/api/user/project/${user.id}`;
+    console.log(url);
+    getData(url).then(result => {
+  	    console.log(result);
+        const response = result;
+    	state.projects = []
+        if (response.data){
+	        state.projects = response.data;
+        }
+        // state.parentDir = state.selectedDir
+        // state.selectedDir = state.files[index];
+        renderProjectList();
+  	})
+  	.catch(err => console.log(err));;
+}
+
+getProjects();
+
+</script>
+
+</body>
+</html>
